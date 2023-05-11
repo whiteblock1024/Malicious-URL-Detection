@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+dnspython
+selenium
+transformers
+sklearn
+joblib
+jieba
+numpy
+pandas
+

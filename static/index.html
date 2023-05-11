@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang=zh-cmn-Hans style="zoom: 100%;">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        #centerTheCanver {
+            width: 50%;
+            border: 1px solid rgb(0, 0, 0);
+            margin: 25px;
+            margin-left: 25%;
+        }
+		body {
+			background-color: #f2f2f2;
+			font-family: Arial, sans-serif;
+		}
+
+		#the1 {
+			text-align: center;
+			margin-top: 50px;
+			font-size: 36px;
+			color: #333;
+		}
+
+		form {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			margin-top: 50px;
+		}
+		input[type="text"] {
+			padding: 10px;
+			margin: 20px 0;
+			border: none;
+			border-radius: 5px;
+			background-color: #fff;
+			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+			color: #333;
+			font-size: 16px;
+			width: 35%;
+			text-align: left;
+			cursor: pointer;
+		}
+        input[type="file"] {
+			padding: 10px;
+			margin: 20px 0;
+			border: none;
+			border-radius: 5px;
+			background-color: #fff;
+			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+			color: #333;
+			font-size: 16px;
+			width: 35%;
+			text-align: center;
+			cursor: pointer;
+		}
+		input[type="button"] {
+			padding: 10px;
+			border: none;
+			border-radius: 5px;
+			background-color: #008CBA;
+			color: #fff;
+			font-size: 16px;
+			width: 10%;
+			cursor: pointer;
+			transition: background-color 0.3s ease;
+		}
+
+		input[type="button"]:hover {
+			background-color: #005D7E;
+		}
+        #myChart {
+            align-items: center;
+        }
+        #tip {
+            text-align: center;
+            font-size: 20px;
+            color: #0d20ae;
+        }
+        #theInfo {
+            text-align: center;
+            font-size: 20px;
+            color: #0d20ae;
+        }
+        #theText {
+            width: 50%;
+            border: 1px solid rgb(0, 0, 0);
+            margin: 25px;
+            margin-left: 25%;
+        }
+        body {
+			background-color: #f2f2f2;
+			font-family: Arial, sans-serif;
+            background:linear-gradient(to right,#e3eeff,#f3e7e9);
+		}
+        h1::first-letter {
+		color: #cb4b4b;
+		}
+	</style>
+    <title>Index</title>
+    <script src="https://cdn.bootcss.com/Chart.js/2.5.0/Chart.js"></script>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<body >
+    <h1 id="the1">
+        Ophanim
+    </h1>
+    <div id="the1">
+        <select id="mySelect" style="
+			padding: 10px;
+			margin: 20px 0;
+			border: none;
+			border-radius: 5px;
+			background-color: #e8571e;
+			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+			color: #ffffff;
+			font-size: 16px;
+			width: 10%;
+			text-align: center;
+			cursor: pointer;
+            " onchange="selectFun()">
+            <option value="single">单个</option>
+            <option value="file">批量</option>
+        </select>
+        <input type="text" name="page" id="page" placeholder="请输入url">
+        <input type="button" id="myButton" value="开始" onclick="submit()" />
+    </div>
+    <div id="theInfo">预测结果、耗时将显示在这儿</div>
+    <div id="centerTheCanver">
+        <canvas id="myChart" width="400px" height="200px"></canvas>
+    </div>
+    <div id="tip">以下是爬取的文本信息</div>
+    <input type="text" id="theText" disabled="disabled" style="opacity:0.2;border: #ffffff;text-align: left;" value="">
+    <br>
+        <input type="button" id="download" disabled="disabled" style="opacity:0;border: #ffffff;margin-bottom: 10%;margin-left: 45%;" value="下载">
+        </br>
+        <script>
+            var get_uuid = '';
+            var mydatafile = new FormData();
+            var canResquest = true;
+            var ctx = document.getElementById("myChart").getContext("2d");
+            //绘制图表
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ["0类正常", "1类购物消费", "2类婚恋交友", "3类假冒身份", "4钓鱼网站", "5类冒充公检法", "6类平台诈骗", "7类招聘兼职", "8类杀猪盘", "9类博彩赌博", "10类信贷理财", "11类刷单诈骗", "12类中奖诈骗",],
+                    datasets: [
+                    {
+                        label: "预测概率",
+                        labelColor: "red",
+                        borderColor: [
+                            'rgba(255,99,132,1)',
+                            'rgba(255,99,132,1)',
+                            'rgba(255,99,132,1)',
+                            'rgba(255,99,132,1)',
+                            'rgba(255,99,132,1)',
+                            'rgba(255,99,132,1)',
+                            'rgba(255,99,132,1)',
+                            'rgba(255,99,132,1)',
+                            'rgba(255,99,132,1)',
+                            'rgba(255,99,132,1)',
+                            'rgba(255,99,132,1)',
+                            'rgba(255,99,132,1)',
+                            'rgba(255,99,132,1)',
+                        ],
+                        backgroundColor: [
+                            'rgba(255,99,132,0.2)',
+                            'rgba(255,99,132,0.2)',
+                            'rgba(255,99,132,0.2)',
+                            'rgba(255,99,132,0.2)',
+                            'rgba(255,99,132,0.2)',
+                            'rgba(255,99,132,0.2)',
+                            'rgba(255,99,132,0.2)',
+                            'rgba(255,99,132,0.2)',
+                            'rgba(255,99,132,0.2)',
+                            'rgba(255,99,132,0.2)',
+                            'rgba(255,99,132,0.2)',
+                            'rgba(255,99,132,0.2)',
+                            'rgba(255,99,132,0.2)',
+                        ],
+                        borderWidth: 1,
+                        data: [0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0],
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [
+                            {
+                                ticks: {
+                                
+                                    beginAtZero:true
+
+                                },
+                                display: true
+                            }
+                        ]
+                    }
+                }
+            });
+
+                function submit() {
+                    if (canResquest) {//如果正在请求，就不再请求
+                        canResquest = false;//设置为正在请求
+                        //设置下拉栏为锁定状态
+                        document.getElementById("mySelect").disabled = true;
+                        y = document.getElementById("theText");
+                        y.style.opacity =0.2;
+                        y.value = ''
+                        var page = document.getElementById("page").value;
+                        var type = '';
+                        //判断page是否含有http
+                        if (page.indexOf("http://") == 0) {
+                            //如果有http，就去掉
+                            page = page.replace("http://", "");
+                        }
+                        //判断page是否含有https
+                        if (page.indexOf("https://") == 0) {
+                            //如果有https，就去掉
+                            page = page.replace("https://", "");
+                        }
+                        x = document.getElementById("theInfo");
+                        var select = document.getElementById("mySelect");
+                        if (select.value == "single") {
+                            x.innerHTML = "正在预测，请稍等......";
+                            $.ajax({
+                            url: "http://127.0.0.1:8080/prediction/single/?url="+page,
+                            type: "post",
+                            dataType: "json",
+                            success: function(jsonObj){
+                                //判断状态
+                                if(jsonObj.state) {
+                                    switch(jsonObj.prediction){
+                                    case '0':type = "0类（正常）";break;
+                                    case '1':type = "1类（购物消费）";break;
+                                    case '2':type = "2类（婚恋交友）";break;
+                                    case '3':type = "3类（假冒身份)";break;
+                                    case '4':type = "4类（钓鱼网站）";break;
+                                    case '5':type = "5类（冒充公检法）";break;
+                                    case '6':type = "6类（平台诈骗）";break;
+                                    case '7':type = "7类（招聘兼职）";break;
+                                    case '8':type = "8类（杀猪盘）";break;
+                                    case '9':type = "9类（博彩赌博）";break;
+                                    case '10':type = "10类（信贷理财）";break;
+                                    case '11':type = "11类（刷单诈骗）";break;
+                                    case '12':type = "12类（中奖诈骗）";break;
+                                }
+                                    x.innerHTML = "预测成功，预测结果为："+type+"，耗时"+jsonObj.time+"秒";
+                                    y.value = jsonObj.text;
+                                    y.style.opacity =0.8;
+                                    var array = new Array();
+                                    var max = 0;
+                                    var maxIndex = 0;
+                                    if(jsonObj.prediction != '0') {
+                                        for (var i = 0; i < 13; i++) {
+                                            if (jsonObj.tensor[i] > max) {
+                                                max = jsonObj.tensor[i];
+                                                maxIndex = i;
+                                            }
+                                        }
+                                        myChart.data.datasets[0].borderColor[maxIndex] = 'rgba(75, 192, 192, 1)',
+                                        myChart.data.datasets[0].backgroundColor[maxIndex] = 'rgba(75, 192, 192, 0.2)',
+                                        myChart.data.datasets[0].data = [jsonObj.tensor[0], jsonObj.tensor[1], jsonObj.tensor[2], jsonObj.tensor[3], jsonObj.tensor[4], jsonObj.tensor[5], jsonObj.tensor[6], jsonObj.tensor[7], jsonObj.tensor[8], jsonObj.tensor[9], jsonObj.tensor[10], jsonObj.tensor[11], jsonObj.tensor[12]];
+                                    }else{
+                                        myChart.data.datasets[0].borderColor[maxIndex] = 'rgba(75, 192, 192, 1)',
+                                        myChart.data.datasets[0].backgroundColor[maxIndex] = 'rgba(75, 192, 192, 0.2)',
+                                        myChart.data.datasets[0].data = [jsonObj.tensor[0], jsonObj.tensor[1]/12, jsonObj.tensor[1]/12, jsonObj.tensor[1]/12, jsonObj.tensor[1]/12, jsonObj.tensor[1]/12, jsonObj.tensor[1]/12, jsonObj.tensor[1]/12, jsonObj.tensor[1]/12, jsonObj.tensor[1]/12, jsonObj.tensor[1]/12, jsonObj.tensor[1]/12, jsonObj.tensor[1]/12];
+                                    }
+                                    myChart.update();
+                                    canResquest = true;//设置为可以请求
+                                    document.getElementById("mySelect").disabled = false;//设置下拉栏为可用状态
+                                }else {
+                                    x.innerHTML = "预测失败，原因："+jsonObj.exception;
+                                    myChart.data.datasets[0].data = [0,0,0,0,0,0,0,0,0,0,0,0,0];
+                                    myChart.update();//修改图表
+                                }
+                                canResquest = true;//设置为可以请求
+                                document.getElementById("mySelect").disabled = false;//设置下拉栏为可用状态
+                            },
+                            error: function(jsonObj) {
+                                x.innerHTML = "请求发送失败！";
+                                myChart.data.datasets[0].data = [0,0,0,0,0,0,0,0,0,0,0,0,0];
+                                myChart.update();//修改图表
+                                canResquest = true;//设置为可以请求
+                                document.getElementById("mySelect").disabled = false;//设置下拉栏为可用状态
+                                
+                            }
+                        });
+                        }
+                        else {
+                            x.innerHTML = "正在上传，请稍等......";
+                            var fileInput = document.getElementById('page');
+                            var file = fileInput.files[0];
+                            var formData = new FormData();
+                            formData.append('file', file);
+                            $.ajax({
+                                url: 'http://127.0.0.1:8080/prediction/batch/upload/',
+                                type: 'POST',
+                                data: formData,
+                                dataType: 'json',
+                                processData: false,
+                                contentType: false,
+                                success: function(response) {
+                                if(response.state){
+                                    console.log('上传成功');
+                                    x.innerHTML = "正在预测，请稍等......";
+                                    get_uuid = response.file_uuid;
+                                    $.ajax({
+                                        url: 'http://127.0.0.1:8080/prediction/batch/predict/?file_uuid='+response.file_uuid,
+                                        type: 'POST',
+                                        dataType: 'json',
+                                        success: function(response) {
+                                            if(response.state){
+                                                x.innerHTML = "预测成功，结果如下，耗时："+response.time+"秒，失效url数量："+response.invalid;
+                                                //alert(response.predicted["0"])
+                                                myChart.data.datasets[0].data = [response.predicted["0"],response.predicted["1"],response.predicted["2"],response.predicted["3"],response.predicted["4"],response.predicted["5"],response.predicted["6"],response.predicted["7"],response.predicted["8"],response.predicted["9"],response.predicted["10"],response.predicted["11"],response.predicted["12"]];
+                                                myChart.data.datasets[0].label = "各类型url数量";
+                                                myChart.update();
+                                                var dl = document.getElementById("download");
+                                                var text = document.getElementById("theText");
+                                                dl.style.opacity = 1;
+                                                text.value = "预测完成，点击下载";
+                                                dl.disabled = false;
+                                                canResquest = true;//设置为可以请求
+                                                document.getElementById("mySelect").disabled = false;//设置下拉栏为可用状态
+                                            }else{
+                                                x.innerHTML = "预测失败，原因："+response.exception;
+                                                myChart.data.datasets[0].data = [0,0,0,0,0,0,0,0,0,0,0,0,0];
+                                                myChart.update();//修改图表
+                                                canResquest = true;//设置为可以请求
+                                                document.getElementById("mySelect").disabled = false;//设置下拉栏为可用状态
+                                            }
+                                        },error: function(response) {
+                                            console.log('请求失败');
+                                            myChart.data.datasets[0].data = [0,0,0,0,0,0,0,0,0,0,0,0,0];
+                                            myChart.update();//修改图表
+                                            canResquest = true;//设置为可以请求
+                                            document.getElementById("mySelect").disabled = false;//设置下拉栏为可用状态
+                                        }
+                                    })
+                                }
+                                else{
+                                    console.log('上传失败');
+                                    x.innerHTML = "请求发送失败，原因："+response.exception;
+                                    myChart.data.datasets[0].data = [0,0,0,0,0,0,0,0,0,0,0,0,0];
+                                    myChart.update();//修改图表
+                                    canResquest = true;//设置为可以请求
+                                    document.getElementById("mySelect").disabled = false;//设置下拉栏为可用状态
+                                }
+                                },
+                                error: function(response) {
+                                    console.log('请求失败');
+                                    x.innerHTML = "请求发送失败";
+                                    myChart.data.datasets[0].data = [0,0,0,0,0,0,0,0,0,0,0,0,0];
+                                    myChart.update();//修改图表
+                                    canResquest = true;//设置为可以请求
+                                    document.getElementById("mySelect").disabled = false;//设置下拉栏为可用状态
+                                }
+                            });
+                            
+                        }
+                    }
+                    else {
+                        alert("正在请求，请稍后再试");
+                    }
+                }
+
+                function selectFun() {
+                    var select = document.getElementById("mySelect");
+                    var text = document.getElementById("theText");
+                    var dl = document.getElementById("download");
+                    x = document.getElementById("tip");
+                    y = document.getElementById("theInfo");
+                    if (select.value == "single") {
+                        document.getElementById("page").type = "text";
+                        y.innerHTML = "预测结果、耗时将显示在这儿";
+                        x.innerHTML = "以下为爬取的文本信息";
+                        dl.style.opacity = 0;
+                        text.style.opacity = 0.2;
+                    }
+                    else {
+                        document.getElementById("page").type = "file";
+                        y.innerHTML = "预测结果、耗时将显示在这儿";
+                        x.innerHTML = "下载结果文件"
+                        dl.style.opacity = 0.2;
+                        text.style.opacity = 0.2;
+                        text.value = "预测未完成，无法下载";
+                        dl.disabled = true;
+                    }
+                }
+                const button = document.querySelector('#download');
+                    button.addEventListener('click', function() {
+                        open("http://127.0.0.1:8080/prediction/batch/download/"+get_uuid);
+                    });
+        </script>
+    </h2>
+</body>
+</html>
