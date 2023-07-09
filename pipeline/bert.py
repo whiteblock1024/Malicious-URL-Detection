@@ -14,7 +14,7 @@ import os
 if not os.path.exists('model/bert/pytorch_model.bin'):
     print("模型文件不存在，正在下载...(预计5-10分钟)")
     import requests
-    url = "http://42.193.246.47/pytorch_model.bin"
+    url = "http://xxx.xxx.xxx.xxx/pytorch_model.bin"
     r = requests.get(url)
     with open('model/bert/pytorch_model.bin', 'wb') as f:
         f.write(r.content)
