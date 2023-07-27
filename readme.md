@@ -1,6 +1,5 @@
-**喝多了瞎&￥%…%写的**
-
-打%￥^%比赛写的，除了解题没&%#用的玩意
+该项目曾用于某比赛打榜，请无视该项目，它可能会工作，也可能不会。
+This project has been used in a tournament leaderboard, please ignore the item, it may or may not work.
 
 
 **项目结构**
